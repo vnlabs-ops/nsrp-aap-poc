@@ -1,0 +1,12 @@
+csv_header: NAME,IP,TELNET,NTP,WEB,TFTP
+csv_filename: switch_report.csv
+csv_path: /tmp
+compliance_checks:
+  - command: "show run | in telnet"
+    expected_result: "no telnet-server"
+  - command: "show run | in ntp"
+    expected_result: "sntp server priority 1 172.16.255.254"
+  - command: "show run | in web"
+    expected_result: "no web-management"
+  - command: "show run | in tftp"
+    expected_result: "no tftp server"

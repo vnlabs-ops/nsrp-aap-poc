@@ -1,0 +1,20 @@
+---
+- name: Check OpenScan Scanner on RHEL
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Check if OpenScan Scanner is installed
+      command: rpm -q openscap-scanner
+      register: openscan_status
+      ignore_errors: true
+
+    - name: Display OpenScan Scanner status
+      debug:
+        var: openscan_status.stdout_lines
+
+    - name: Notify if OpenScan Scanner is not installed
+      fail:
+        msg: "OpenScan Scanner is not installed on the server."
+      when: "'not installed' in openscan_status.stdout"
+

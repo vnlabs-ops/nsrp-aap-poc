@@ -1,0 +1,71 @@
+---
+- name: PLAY 1 - Check Aruba switch for compliance
+  hosts: network
+
+  vars_files:
+  - vars/aruba.yaml
+
+  
+  tasks:
+        
+    - name: Run commands from the command list 
+      register: cmd_outputs
+      loop: "{{ compliance_checks }}"
+      community.network.aruba_command:
+        commands: "{{ item.command }}\n\n"
+
+    - name: Check for results
+      set_fact:
+        check_result: >-
+          {%- set check_result = ["{{ inventory_hostname }}", "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"] -%}
+          {%- set len = compliance_checks|length -%}
+          {%- for i in range(0,len) -%}
+            {%- set check_condition = namespace(value="OK") -%} 
+            {%- set condition = compliance_checks[i].expected_result -%} 
+            {%- if condition in cmd_outputs.results[i].stdout[0] -%}
+                {%- set check_condition.value = "FAIL" -%}                                                       
+            {%- endif -%}            
+            {%- do check_result.append(check_condition.value) -%}
+          {%- endfor -%}          
+          {{ check_result }}
+
+    - name: CSV - Create file
+      ansible.builtin.lineinfile:
+        dest: "{{ csv_path }}/{{ csv_filename }}"                    
+        line: " {{ csv_header }}"
+        create: yes
+        state: present
+      delegate_to: localhost
+      run_once: yes  
+
+    - name: CSV - Build content line 
+      set_fact:
+        csv_line: "{{ check_result | join(',') }}"
+
+    - name: CSV - Append content into file
+      ansible.builtin.lineinfile:
+        dest: "{{ csv_path }}/{{ csv_filename }}" 
+        line: "{{ csv_line }}"        
+        state: present
+      delegate_to: localhost  
+
+    # - name: create HTML report
+    #   template:
+    #     src: templates/switches.j2
+    #     dest: ./switch_report.html
+    #   delegate_to: localhost
+    #   run_once: yes
+
+
+- name: PLAY 2 - Copy CSV to web server
+  hosts: ubuntu
+
+  vars_files:
+  - vars/aruba.yaml
+
+  tasks:
+    - name: Copy CSV to web server
+      become: yes
+      ansible.builtin.copy:
+        src: "{{ csv_path }}/{{ csv_filename }}"
+        dest: "/var/www/html/{{ csv_filename }}"

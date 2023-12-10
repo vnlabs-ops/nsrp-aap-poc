@@ -1,0 +1,7 @@
+package_name: "libopenscap8"
+is_installed: no
+oval_file_path: "/tmp"
+local_date_time: "{{ lookup('pipe', 'date +%Y%m%dT%H%M%S') }}"
+openscap_profile_id: "xccdf_org.ssgproject.content_profile_cis_level1_server"
+openscap_profile_filename: "ssg-ubuntu2204-ds.xml"
+internal_http_base_path: "http://172.26.0.62/openscap"

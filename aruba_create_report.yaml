@@ -1,0 +1,69 @@
+---
+- name: Check Aruba switch for compliance
+  hosts: aruba_switches 
+
+  vars:
+    csv_header: NAME,IP,TELNET,NTP,WEB,TFTP
+    csv_filename: switch_report.csv
+    csv_path: /tmp
+    compliance_checks:
+      - command: "show run | in telnet"
+        expected_result: "no telnet-server"
+      - command: "show run | in ntp"
+        expected_result: "ntp server priority 1 172.16.255.254"
+      - command: "show run | in web"
+        expected_result: "no web-management"
+      - command: "show run | in tftp"
+        expected_result: "no tftp server"
+
+  
+  tasks:
+        
+    - name: Run commands from the command list 
+      register: cmd_outputs
+      loop: "{{ compliance_checks }}"
+      community.network.aruba_command:
+        commands: {{ item.command }}
+
+    - name: Check for results
+      set_fact:
+        check_result: >-
+          {%- set check_result = ["{{ inventory_hostname }}", "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"] -%}
+          {%- set len = compliance_checks|length -%}
+          {%- for i in range(0,len) -%}
+            {%- set check_condition = namespace(value="OK") -%} 
+            {%- set condition = compliance_checks[i].expected_result -%} 
+            {%- if condition in cmd_outputs.results[i].stdout[0] -%}
+                {%- set check_condition.value = "FAIL" -%}                                                       
+            {%- endif -%}            
+            {%- do check_result.append(check_condition.value) -%}
+          {%- endfor -%}          
+          {{ check_result }}
+
+    - name: CSV - Create file
+      ansible.builtin.lineinfile:
+        dest: "{{ csv_path }}/{{ csv_filename }}"                    
+        line: " {{ csv_header }}"
+        create: yes
+        state: present
+      deligate_to: localhost
+      run_once: yes  
+
+    - name: CSV - Build content line 
+      set_fact:
+        csv_line: "{{ check_result | join(',') }}"
+
+    - name: CSV - Append content into file
+      ansible.builtin.lineinfile:
+        dest: "{{ csv_path }}/{{ csv_filename }}" 
+        line: "{{ csv_line }}"        
+        state: present
+      deligate_to: localhost  
+
+    - name: create HTML report
+      template:
+        src: templates/switches.j2
+        dest: ./switch_report.html
+      deligate_to: localhost
+      run_once: yes
+    

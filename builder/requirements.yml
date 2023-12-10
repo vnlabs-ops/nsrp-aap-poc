@@ -1,0 +1,6 @@
+---
+collections:
+  # https://github.com/aruba/aos-switch-ansible-collection/tree/master
+  - name: ansible.netcommon
+  - name: arubanetworks.aos_switch
+  - name: servicenow.itsm

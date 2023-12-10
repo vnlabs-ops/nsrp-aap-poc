@@ -1,0 +1,38 @@
+<html>
+<head>
+<style>
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: center;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #D6EEEE;
+}
+</style>
+</head>
+<body>
+<table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+	<thead>
+		<tr>
+			<td>DEVICE NAME</td>
+			<td>DEVICE IP</td>
+			<td>TELNET</td>
+            <td>NTP</td>
+            <td>WEB</td>
+            <td>TFTP</td>
+		</tr>	
+	</thead>
+    <tbody>
+        <tr>            
+            {{ check_result }}        
+        </tr>
+    </tbody>
+</table>
+
+</html>
