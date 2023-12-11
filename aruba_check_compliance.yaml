@@ -11,7 +11,7 @@
     - name: Run commands from the command list 
       register: cmd_outputs
       loop: "{{ compliance_checks }}"
-      arubaoss_command.arubaoss_command:
+      arubanetworks.aos_switch.arubaoss_command:
         commands: ["{{ item.command }}"]
 
     - name: Check for results
@@ -57,15 +57,15 @@
     #   run_once: yes
 
 
-- name: PLAY 2 - Copy CSV to web server
-  hosts: ubuntu
+# - name: PLAY 2 - Copy CSV to web server
+#   hosts: ubuntu
 
-  vars_files:
-  - vars/aruba.yaml
+#   vars_files:
+#   - vars/aruba.yaml
 
-  tasks:
-    - name: Copy CSV to web server
-      become: yes
-      ansible.builtin.copy:
-        src: "{{ csv_path }}/{{ csv_filename }}"
-        dest: "/var/www/html/{{ csv_filename }}"
+#   tasks:
+#     - name: Copy CSV to web server
+#       become: yes
+#       ansible.builtin.copy:
+#         src: "{{ csv_path }}/{{ csv_filename }}"
+#         dest: "/var/www/html/{{ csv_filename }}"
