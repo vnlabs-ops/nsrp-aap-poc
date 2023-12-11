@@ -35,7 +35,6 @@
         line: " {{ csv_header }}"
         create: yes
         state: present
-      delegate_to: localhost
       run_once: yes  
 
     - name: CSV - Build content line 
@@ -47,7 +46,6 @@
         dest: "{{ csv_path }}/{{ csv_filename }}" 
         line: "{{ csv_line }}"        
         state: present
-      delegate_to: localhost  
 
     # - name: create HTML report
     #   template:
