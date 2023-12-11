@@ -11,8 +11,8 @@
     - name: Run commands from the command list 
       register: cmd_outputs
       loop: "{{ compliance_checks }}"
-      community.network.aruba_command:
-        commands: "{{ item.command }}\n\n"
+      arubaoss_command.arubaoss_command:
+        commands: ["{{ item.command }}"]
 
     - name: Check for results
       set_fact:
