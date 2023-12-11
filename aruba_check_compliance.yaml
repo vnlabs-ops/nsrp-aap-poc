@@ -56,16 +56,3 @@
     #   delegate_to: localhost
     #   run_once: yes
 
-
-# - name: PLAY 2 - Copy CSV to web server
-#   hosts: ubuntu
-
-#   vars_files:
-#   - vars/aruba.yaml
-
-#   tasks:
-#     - name: Copy CSV to web server
-#       become: yes
-#       ansible.builtin.copy:
-#         src: "{{ csv_path }}/{{ csv_filename }}"
-#         dest: "/var/www/html/{{ csv_filename }}"
