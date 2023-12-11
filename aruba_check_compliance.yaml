@@ -17,7 +17,7 @@
     - name: Check for results
       set_fact:
         check_result: >-
-          {%- set check_result = ["{{ inventory_hostname }}", "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"] -%}
+          {%- set check_result = [{{ inventory_hostname }}, {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}] -%}
           {%- set len = compliance_checks|length -%}
           {%- for i in range(0,len) -%}
             {%- set check_condition = namespace(value="OK") -%} 
