@@ -12,7 +12,7 @@
       register: cmd_outputs
       loop: "{{ compliance_checks }}"
       arubanetworks.aos_switch.arubaoss_command:
-        commands: ["{{ item.command }}\\n"]
+        commands: ["{{ item.command }}"]
 
     - name: Check for results
       set_fact:
