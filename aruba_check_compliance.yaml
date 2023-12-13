@@ -18,10 +18,14 @@
       arubanetworks.aos_switch.arubaoss_command:
         commands: ["{{ item.command }}"]
 
+    - name: get name of the current switch
+      set_fact:
+        switch_name: cmd_outputs.results[0].stdout[0] | substring(0, 29)
+
     - name: Check for results
       set_fact:
         check_result: >-
-          {%- set check_result = [ cmd_outputs.results[0].stdout[0] | substring(0.29), ansible_host ] -%}
+          {%- set check_result = [ switch_name , ansible_host ] -%}
           {%- set len = compliance_checks|length -%}
           {%- for i in range(1,len) -%}
             {%- set check_condition = namespace(value="OK") -%} 
