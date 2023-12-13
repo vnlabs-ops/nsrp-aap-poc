@@ -1,7 +1,7 @@
 ---
 - name: Check OpenSCAP Scanner on Ubuntu
   hosts: ubuntu
-  # become: yes
+  become: yes
   gather_facts: false 
 
   vars_files:
@@ -12,68 +12,65 @@
     - name: Check if OpenSCAP Scanner is installed
       block:
 
-        - name: Get package facts on host
-          command: apt list {{ package_name }}
-          register: check_package_result
+      - name: Get package facts on host
+        command: apt list {{ package_name }}
+        register: check_package_result
 
-        - name: check if {{ package_name }} is installed
-          # when: "\"{{ package_name }}\" in ansible_facts.packages"
-          when: "'installed' in check_package_result.stdout"
-          set_fact:
-            is_installed: yes
+      - name: check if {{ package_name }} is installed
+        # when: "\"{{ package_name }}\" in ansible_facts.packages"
+        when: "'installed' in check_package_result.stdout"
+        set_fact:
+          is_installed: yes
 
-        - name: Notify if OpenSCAP Scanner is not installed
-          when: not is_installed
-          debug:
-            msg: "OpenSCAP Scanner is not installed on the server."
+      - name: Notify if OpenSCAP Scanner is not installed
+        when: not is_installed
+        debug:
+          msg: "OpenSCAP Scanner is not installed on the server."
 
-
-    - name: Make sure necessary packages are present
-      block:        
-        - name: make sure all the necessary packages are present 
-          become: yes
-          ansible.builtin.apt:
-            force_apt_get: yes
-            pkg:
-             - apt-transport-https
-             - gnupg2
-             - bzip2
-             - software-properties-common
-             - libopenscap8          
+    - name: make sure all the necessary packages are present 
+      # become: yes
+      ansible.builtin.apt:
+        force_apt_get: yes
+        pkg:
+          - apt-transport-https
+          - gnupg2
+          - bzip2
+          - software-properties-common
+          - libopenscap8          
 
 
-      # when: not is_installed
-      
+    - name: get the host os-release
+      command: lsb_release -cs
+      register: os_release
 
-    - name: Get the relevant oval file, unzip and generate compliance report
-      block:
+    # # su dung oval file from Canonical from https://ubuntu.com/security/oval
+    # - name: download oval file from Canonical
+    #   ansible.builtin.get_url:
+    #     url: "https://security-metadata.canonical.com/oval/com.ubuntu.{{ os_release.stdout }}.usn.oval.xml.bz2"
+    #     dest: "{{ oval_file_path }}"
 
-        - name: get the host os-release
-          command: lsb_release -cs
-          register: os_release
+    # - name: run the compliance check against OVAL file from Canonical
+    #   ansible.builtin.command: "oscap oval eval --report {{ oval_file_path }}/{{ inventory_hostname }}_oval_{{ local_date_time }}.html {{ oval_file_path }}/com.ubuntu.{{ os_release.stdout }}.usn.oval.xml"
 
-        # # su dung oval file from Canonical from https://ubuntu.com/security/oval
-        # - name: download oval file from Canonical
-        #   ansible.builtin.get_url:
-        #     url: "https://security-metadata.canonical.com/oval/com.ubuntu.{{ os_release.stdout }}.usn.oval.xml.bz2"
-        #     dest: "{{ oval_file_path }}"
+    # - name: unarchive the file to {{ oval_file_path }} folder
+    #   ansible.builtin.command: "bunzip2 -f {{ oval_file_path }}/com.ubuntu.{{ os_release.stdout }}.usn.oval.xml.bz2"
 
-        # - name: run the compliance check against OVAL file from Canonical
-        #   ansible.builtin.command: "oscap oval eval --report {{ oval_file_path }}/{{ inventory_hostname }}_oval_{{ local_date_time }}.html {{ oval_file_path }}/com.ubuntu.{{ os_release.stdout }}.usn.oval.xml"
+    # su dung openscap profile file from https://github.com/ComplianceAsCode/content/releases
+    - name: download openscap xml file from local web server
+      ansible.builtin.get_url:
+        url: "{{ internal_http_base_path }}/{{ openscap_profile_filename }}"
+        dest: "{{ oval_file_path }}"
 
-        # - name: unarchive the file to {{ oval_file_path }} folder
-        #   ansible.builtin.command: "bunzip2 -f {{ oval_file_path }}/com.ubuntu.{{ os_release.stdout }}.usn.oval.xml.bz2"
+    - name: run compliance check against CIS profile
+      ansible.builtin.command: "oscap xccdf eval --profile {{ openscap_profile_id }} --report {{ inventory_hostname }}_cis_{{ local_date_time }}.html --oval-results {{ oval_file_path }}/{{ openscap_profile_filename }}"
+      ignore_errors: yes
 
-        # su dung openscap profile file from https://github.com/ComplianceAsCode/content/releases
-        - name: download openscap xml file from local web server
-          ansible.builtin.get_url:
-            url: "{{ internal_http_base_path }}/{{ openscap_profile_filename }}"
-            dest: "{{ oval_file_path }}"
-
-        - name: run compliance check against CIS profile
-          become: yes 
-          ansible.builtin.command: "oscap xccdf eval --profile {{ openscap_profile_id }} --results-arf {{ oval_file_path }}/{{ inventory_hostname }}_cis_{{ local_date_time }}.xml --report {{ oval_file_path }}/{{ inventory_hostname }}_cis_{{ local_date_time }}.html --oval-results {{ oval_file_path }}/{{ openscap_profile_filename }}"
-          ignore_errors: yes
+    - name: copy to html root  
+      ansible.builtin.fetch:
+        src: "{{ inventory_hostname }}_cis_{{ local_date_time }}.html"
+        dest: "{{ web_html_file_path }}"
+        owner: "apache"
+        group: "apache"
 
         #- name: copy report to http server 
 

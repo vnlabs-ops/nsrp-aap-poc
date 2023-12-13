@@ -1,7 +1,19 @@
 csv_header: NAME,IP,TELNET,NTP,WEB,TFTP
 csv_filename: switch_report.csv
-csv_path: /var/tmp
+
+# path must be existed in the controller before running playbook, ower: group -> awx:awx
+# Ansible Automation Platform 2, under Settings > Jobs > Jobs settings
+# - add this below line to Paths to expose to isolated job
+#    [
+#       /reports:/reports
+#    ]
+aap_csv_file_path: "/reports" 
+
+web_html_file_path: "/var/www/html/reports/switches"
+
 compliance_checks:
+  - command: "show run | in hostname"
+    expected_result: ""
   - command: "show run | in telnet"
     expected_result: "^no telnet-server"
   - command: "show run | in ntp"

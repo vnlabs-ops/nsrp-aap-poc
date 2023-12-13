@@ -7,8 +7,7 @@
 
   tasks:
     - name: Copy CSV to web server
-      become: yes
       ansible.builtin.copy:
-        src: "{{ csv_path }}/{{ csv_filename }}"
-        dest: "/var/www/html/{{ csv_filename }}"
+        src: "{{ aap_csv_file_path }}/{{ csv_filename }}"
+        dest: "{{ web_html_file_path }}/{{ csv_filename }}"
     
