@@ -21,7 +21,7 @@
     - name: Check for results
       set_fact:
         check_result: >-
-          {%- set check_result = [{{ inventory_hostname }}, {{ ansible_host }}] -%}
+          {%- set check_result = [ inventory_hostname, ansible_host ] -%}
           {%- set len = compliance_checks|length -%}
           {%- for i in range(0,len) -%}
             {%- set check_condition = namespace(value="OK") -%} 
