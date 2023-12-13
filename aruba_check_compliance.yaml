@@ -8,9 +8,9 @@
 
   
   tasks:
-    - name: Retrieve all information from the device and save into a variable "facts_output"
-      arubanetworks.aos_switch.arubaoss_facts:
-      register: facts_output
+    # - name: Retrieve all information from the device and save into a variable "facts_output"
+    #   arubanetworks.aos_switch.arubaoss_facts:
+    #   register: facts_output
     
     - name: Run commands from the command list 
       register: cmd_outputs
