@@ -8,6 +8,15 @@
   tasks:
     - name: Copy CSV to web server
       ansible.builtin.copy:
-        src: "{{ aap_csv_file_path }}/{{ csv_filename }}"
+        src: "{{ aap_csv_src_file }}"
         dest: "{{ web_html_file_path }}/{{ csv_filename }}"
+
+    # - name: Create HTML report
+    #   vars:
+    #     local_date_time: "{{ lookup('pipe', 'date +%Y%m%dT%H%M%S') }}"
+    #   ansible.builtin.template:
+    #     src: templates/switches.j2
+    #     dest: "{{ web_html_file_path }}/{{local_date_time}}.html"
+  
+
     

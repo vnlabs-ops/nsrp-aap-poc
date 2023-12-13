@@ -20,18 +20,19 @@ tr:nth-child(even) {
 <table border="1" cellpadding="1" cellspacing="1" style="width:500px">
 	<thead>
 		<tr>
-			<td>DEVICE NAME</td>
-			<td>DEVICE IP</td>
-			<td>TELNET</td>
-            <td>NTP</td>
-            <td>WEB</td>
-            <td>TFTP</td>
+			{% for header in csv_header.split(",") %}
+        <th style="border: 1px solid black; padding: 8px 16px;">{{ header }}</th>
+      {% endfor %}
 		</tr>	
 	</thead>
-    <tbody>
-        <tr>            
-            {{ check_result }}        
-        </tr>
+    <tbody> 
+        {% for host in csv_file.list %}
+          <tr>
+              {% for header in headers.split(",") %}
+              <td style="border: 1px solid black; padding: 8px 16px;">{{ host[header] }}</td>
+              {% endfor %}
+          </tr>
+        {% endfor %}
     </tbody>
 </table>
 

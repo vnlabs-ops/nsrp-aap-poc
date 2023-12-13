@@ -6,6 +6,15 @@
   vars_files:
   - vars/aruba.yaml
 
+  pre_tasks:
+
+    - name: CSV - Create file     
+      ansible.builtin.copy:
+        dest: "{{ web_html_file_path }}/{{ csv_filename }}"                    
+        content: " {{ csv_header }}"
+        # owner: apache
+        # group: apache
+      run_once: yes  
   
   tasks:
     
@@ -34,39 +43,29 @@
           {%- endfor -%}          
           {{ check_result }}
 
-    - name: CSV - Create file 
-      become: yes
-      ansible.builtin.copy:
-        dest: "{{ web_html_file_path }}/{{ csv_filename }}"                    
-        content: " {{ csv_header }}"
-        # owner: apache
-        # group: apache
-      run_once: yes  
-      delegate_to: ubuntu
-
     - name: CSV - Build content line 
       set_fact:
         csv_line: "{{ check_result | join(',') }}"
 
     - name: CSV - Append content into file
-      become: yes
       ansible.builtin.lineinfile:
         dest: "{{ web_html_file_path }}/{{ csv_filename }}" 
         line: "{{ csv_line }}"        
         state: present
-      delegate_to: ubuntu
-    
-    # - name: CSV - Fetch file to aap 
-    #   fetch:
-    #     src: "{{ csv_filename }}" 
-    #     dest: "{{ aap_csv_file_path }}"
-    #     owner: awx
-    #     group: awx
+     
+  post_tasks:
 
-    # - name: create HTML report
-    #   template:
-    #     src: templates/switches.j2
-    #     dest: ./switch_report.html
-    #   delegate_to: localhost
-    #   run_once: yes
+    - name: CSV - Fetch file to aap
+      register: output_file 
+      fetch:
+        src: "{{ csv_filename }}" 
+        dest: "{{ aap_csv_file_path }}"
+        owner: awx
+        group: awx
 
+    - name: CSV - pass file path to next JT
+      set_stats:
+        data:
+          aap_csv_src_file: "{{ output_file.dest }}"
+        
+  
