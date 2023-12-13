@@ -20,7 +20,7 @@
 
     - name: get name of the current switch
       set_fact:
-        switch_name: cmd_outputs.results[0].stdout[0] | substring(0, 29)
+        switch_name: "{{ cmd_outputs.results[0].stdout[0] | substring(0, 29) }}
 
     - name: Check for results
       set_fact:
