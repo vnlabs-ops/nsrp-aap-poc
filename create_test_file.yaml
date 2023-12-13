@@ -1,19 +1,10 @@
 ---
 - name: Create test file
   hosts: ubuntu
-  become: yes
   gather_facts: false 
 
   tasks:
 
-  - name: creata file
-    lineinfile:
-      dest: thanh_test_01.txt
-      line: "This is Thanh test"
-      state: present
-      create: yes 
-
-  - name: fetch file to aap 
-    fetch:
-      src: "thanh_test_01.txt" 
-      dest: "/reports"
+  - name: Print servicenow request number
+    debug:
+      msg: "Trigged by ServiceNow request: {{ request_number }}" 

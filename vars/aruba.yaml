@@ -13,7 +13,7 @@ web_html_file_path: "/var/www/html/reports/switches"
 
 compliance_checks:
   - command: "show run | in hostname"
-    expected_result: ""
+    expected_result: "^in hostnamehostname (.*)$"
   - command: "show run | in telnet"
     expected_result: "^no telnet-server"
   - command: "show run | in ntp"

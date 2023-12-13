@@ -8,9 +8,6 @@
 
   
   tasks:
-    # - name: Retrieve all information from the device and save into a variable "facts_output"
-    #   arubanetworks.aos_switch.arubaoss_facts:
-    #   register: facts_output
     
     - name: Run commands from the command list 
       register: cmd_outputs
@@ -20,12 +17,12 @@
 
     - name: get name of the current switch
       set_fact:
-        switch_name: "{{ cmd_outputs.results[0].stdout[0] | substring(0, 29) }}"
+        switch_name: "{{ cmd_outputs.results[0].stdout[0] | regex_replace('^.*hostname.* (.*)$', '\\1') }}"
 
     - name: Check for results
       set_fact:
         check_result: >-
-          {%- set check_result = [ switch_name , ansible_host ] -%}
+          {%- set check_result = [ switch_name, ansible_host ] -%}
           {%- set len = compliance_checks|length -%}
           {%- for i in range(1,len) -%}
             {%- set check_condition = namespace(value="OK") -%} 
@@ -37,31 +34,34 @@
           {%- endfor -%}          
           {{ check_result }}
 
-    - name: CSV - Create file
-      ansible.builtin.lineinfile:
-        dest: "{{ csv_filename }}"                    
-        line: " {{ csv_header }}"
-        create: yes
-        state: present
+    - name: CSV - Create file 
+      become: yes
+      ansible.builtin.copy:
+        dest: "{{ web_html_file_path }}/{{ csv_filename }}"                    
+        content: " {{ csv_header }}"
+        # owner: apache
+        # group: apache
       run_once: yes  
+      delegate_to: ubuntu
 
     - name: CSV - Build content line 
       set_fact:
         csv_line: "{{ check_result | join(',') }}"
 
     - name: CSV - Append content into file
+      become: yes
       ansible.builtin.lineinfile:
-        dest: "{{ csv_filename }}" 
+        dest: "{{ web_html_file_path }}/{{ csv_filename }}" 
         line: "{{ csv_line }}"        
         state: present
-
+      delegate_to: ubuntu
     
-    - name: CSV - Fetch file to aap 
-      fetch:
-        src: "{{ csv_filename }}" 
-        dest: "{{ aap_csv_file_path }}"
-        owner: awx
-        group: awx
+    # - name: CSV - Fetch file to aap 
+    #   fetch:
+    #     src: "{{ csv_filename }}" 
+    #     dest: "{{ aap_csv_file_path }}"
+    #     owner: awx
+    #     group: awx
 
     # - name: create HTML report
     #   template:
