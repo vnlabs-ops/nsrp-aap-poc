@@ -69,8 +69,8 @@
       ansible.builtin.fetch:
         src: "{{ inventory_hostname }}_cis_{{ local_date_time }}.html"
         dest: "{{ web_html_file_path }}"
-        owner: "apache"
-        group: "apache"
+        # owner: "apache"
+        # group: "apache"
 
         #- name: copy report to http server 
 

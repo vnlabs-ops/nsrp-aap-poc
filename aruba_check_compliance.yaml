@@ -24,7 +24,7 @@
 
     - name: get name of the current switch
       set_fact:
-        switch_name: "{{ cmd_outputs.results[0].stdout[0] | regex_replace('^.*hostname.* (.*)$', '\\1') }}"
+        switch_name: "{{ cmd_outputs.results[0].stdout[0] | regex_replace('^.*hostname.* (.*)$', '\\1') | regex_replace('\"', '') }}"
 
     - name: Check for results
       set_fact:
