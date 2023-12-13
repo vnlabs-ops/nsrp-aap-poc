@@ -8,12 +8,10 @@
 
   pre_tasks:
 
-    - name: CSV - Create file     
+    - name: CSV - Create file   
       ansible.builtin.copy:
-        dest: "{{ web_html_file_path }}/{{ csv_filename }}"                    
+        dest: "{{ csv_filename }}"                    
         content: " {{ csv_header }}"
-        # owner: apache
-        # group: apache
       run_once: yes  
   
   tasks:
@@ -49,7 +47,7 @@
 
     - name: CSV - Append content into file
       ansible.builtin.lineinfile:
-        dest: "{{ web_html_file_path }}/{{ csv_filename }}" 
+        dest: "{{ csv_filename }}" 
         line: "{{ csv_line }}"        
         state: present
      
