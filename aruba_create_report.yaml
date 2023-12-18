@@ -18,7 +18,7 @@
       register: output_file
       ansible.builtin.copy:
         src: "{{ aap_csv_src_file }}"
-        dest: "{{ dest_file }}"
+        dest: "{{ web_html_file_path }}"
 
     - name: Read CSV file
       register: switch_list
