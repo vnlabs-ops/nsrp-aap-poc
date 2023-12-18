@@ -1,4 +1,4 @@
-csv_header: "NAME,IP,TELNET,NTP,WEB,TFTP"
+csv_header: "NAME,IP,TELNET,NTP,WEB,TFTP,CONSOLE"
 # csv_filename: switch_report.csv
 
 # path must be existed in the controller before running playbook, ower: group -> awx:awx
@@ -22,3 +22,5 @@ compliance_checks:
     expected_result: "^no web-management"
   - command: "show run | in tftp"
     expected_result: "^no tftp server"
+  - command: "show run | in console"
+    expected_result: "^console inactivity-timer"
