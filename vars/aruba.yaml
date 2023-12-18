@@ -1,4 +1,4 @@
-csv_header: NAME,IP,TELNET,NTP,WEB,TFTP
+csv_header: "NAME,IP,TELNET,NTP,WEB,TFTP"
 # csv_filename: switch_report.csv
 
 # path must be existed in the controller before running playbook, ower: group -> awx:awx
