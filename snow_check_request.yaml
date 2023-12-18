@@ -22,14 +22,3 @@
     servicenow.itsm.change_request_info:
       number: "{{ request_number }}"
 
-  - name: Transition to Scheduled
-    servicenow.itsm.change_request:
-      state: "scheduled"     
-      assignment_group: "{{ assignment_group }}"
-      number: "{{ request_number }}"
-
-  - name: Transition to Implement
-    servicenow.itsm.change_request:
-      state: "implement"      
-      assignment_group: "{{ assignment_group }}"
-      number: "{{ request_number }}"
