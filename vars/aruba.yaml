@@ -23,4 +23,4 @@ compliance_checks:
   - command: "show run | in tftp"
     expected_result: "^no tftp server"
   - command: "show run | in console"
-    expected_result: "^console inactivity-timer"
+    expected_result: "^inactivity-timer"
