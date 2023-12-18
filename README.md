@@ -1,6 +1,6 @@
 # nsrp-aap-poc
 
-For Aruba switches
+Aruba switches
 ----------------
 
 The variables that should be defined in your inventory for your AOS-Switch host are:
@@ -29,8 +29,8 @@ all:
       ansible_network_os: arubanetworks.aos_switch.arubaoss  # Do not change
 ```
 
-Setting Environment Variables
---------------
+### Setting Environment Variables
+
 In order to use the AOS-Switch collection you need to modify your environment in order for Ansible to recognize the Network OS:  
 
 Example of setting environment variable in the command :
@@ -41,3 +41,53 @@ Example of setting environment variable in the command :
 [defaults]
 NETWORK_GROUP_MODULES=arubaoss
 ```   
+ServiceNow integration
+----------------
+
+On AAP web UI, create a Custom credentials type for ServiceNow:
+
+- Name: ServiceNow - CLoud-instance
+- Input Configuration:
+
+```yaml
+fields:
+  - id: instance
+    type: string
+    label: Cloud-instance URL
+  - id: username
+    type: string
+    label: Username
+  - id: password
+    type: string
+    label: Password
+    secret: true
+required:
+  - instance
+  - username
+  - password
+
+```
+
+- Injector configuration
+  
+```yaml
+env:
+  SN_HOST: '{{ instance }}'
+  SN_PASSWORD: '{{ password }}'
+  SN_USERNAME: '{{ username }}'
+extra_vars:
+  sn_host: '{{ instance }}'
+  sn_password: '{{ password }}'
+  sn_username: '{{ username }}'
+
+```
+AAP setup
+----------------
+- Create a Workflow Job template  with Survey to provide values for requested parameters (read more in snow_create_request.yaml playbook)
+- Create 2 users and 1 team:
+  - team: IT Team
+  - user: manager and helpdesk
+- Assign revelavent roles to Workflow
+  - helpdesk: only Execute and Read the workflow and related job templates
+  - manager: workflow admin
+

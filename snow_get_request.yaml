@@ -1,0 +1,35 @@
+---
+# This can be an example of getting a change request 
+# to apply "pull info" approach if need to wait for approval from SNOW to continue
+- name: Get Change Request Info
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  tasks:
+ 
+  
+  # - name: Retrieve new change requests assigned to abel.tuter or bertie.luby
+  #   servicenow.itsm.change_request_info:
+  #     query:
+  #       - state: = new
+  #         assigned_to: = abel.tuter
+  #       - state: = new
+  #         assigned_to: = bertie.luby
+          
+  - name: Get Change Request Info
+    register: cr_info 
+    servicenow.itsm.change_request_info:
+      number: "{{ request_number }}"
+
+  - name: Transition to Scheduled
+    servicenow.itsm.change_request:
+      state: scheduled      
+      assignment_group: "{{ assignment_group }}"
+      number: "{{ request_number }}"
+
+  - name: Transition to Implement
+    servicenow.itsm.change_request:
+      state: implement      
+      assignment_group: "{{ assignment_group }}"
+      number: "{{ request_number }}"

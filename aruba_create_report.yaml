@@ -1,26 +1,34 @@
 ---
 - name: Copy CSV to web server
   hosts: web
+  gather_facts: no
 
   vars_files:
   - vars/aruba.yaml
 
-  vars:
-    dest_file: "{{ web_html_file_path }}/{{ csv_filename }}"
-
   tasks:
+
+    - name: Get system time
+      run_once: yes
+      ansible.builtin.setup:
+        filter:
+          - ansible_date_time
+
     - name: Copy CSV to web server
+      register: output_file
       ansible.builtin.copy:
         src: "{{ aap_csv_src_file }}"
         dest: "{{ dest_file }}"
 
-    - name: Create HTML report
-      vars:
-        local_date_time: "{{ lookup('pipe', 'date +%Y%m%dT%H%M%S') }}"
-        csvline: "{{ lookup('ansible.builtin.csvfile', switch_name, file=dest_file, delimiter=',') }}"
+    - name: Read CSV file
+      register: switch_list
+      community.general.read_csv:
+        path: "{{ output_file.dest }}"
+
+    - name: Create HTML report      
       ansible.builtin.template:
         src: templates/switches.j2
-        dest: "{{ web_html_file_path }}/{{local_date_time}}.html"
+        dest: "{{ web_html_file_path }}/{{ ansible_date_time.date }}.html"
   
 
     

@@ -1,0 +1,32 @@
+---
+- name: Copy file to web server
+  hosts: linux
+  gather_facts: no
+
+  vars_files:
+  - vars/ubuntu.yaml
+
+  tasks:
+
+    - name: Get system time
+      run_once: yes
+      ansible.builtin.setup:
+        filter:
+          - ansible_date_time
+
+    - name: copy file from ubuntu servers to aap-controller
+      register: output_file
+      fetch:
+        src: "{{ oval_file_path }}/{{ ansible_date_time.date }}.html"
+        dest: "/reports"
+        owner: awx
+        group: awx
+
+    # delegate_to specify the web server - in this case web server is ubuntu
+    - name: copy file from aap-controller to web server     
+      copy:
+        src: "{{ output_file.dest }}"
+        dest: "{{ web_html_file_path }}"
+      delegate_to: ubuntu  
+      
+

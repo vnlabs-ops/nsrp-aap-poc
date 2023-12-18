@@ -9,6 +9,11 @@
 
   tasks:
     
+    - name: Get system time
+      ansible.builtin.setup:
+        filter:
+          - ansible_date_time
+
     - name: Check if OpenSCAP Scanner is installed
       block:
 
@@ -62,15 +67,7 @@
         dest: "{{ oval_file_path }}"
 
     - name: run compliance check against CIS profile
-      ansible.builtin.command: "oscap xccdf eval --profile {{ openscap_profile_id }} --report {{ inventory_hostname }}_cis_{{ local_date_time }}.html --oval-results {{ oval_file_path }}/{{ openscap_profile_filename }}"
+      ansible.builtin.command: "oscap xccdf eval --profile {{ openscap_profile_id }} --report {{ oval_file_path }}/{{ ansible_date_time.date }}.html --oval-results {{ oval_file_path }}/{{ openscap_profile_filename }}"
       ignore_errors: yes
 
-    - name: copy to html root  
-      ansible.builtin.fetch:
-        src: "{{ inventory_hostname }}_cis_{{ local_date_time }}.html"
-        dest: "{{ web_html_file_path }}"
-        # owner: "apache"
-        # group: "apache"
-
-        #- name: copy report to http server 
 

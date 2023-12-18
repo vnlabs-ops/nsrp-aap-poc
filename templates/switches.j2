@@ -3,12 +3,16 @@
 <style>
 table {
   border-collapse: collapse;
-  width: 100%;
+  border="1";
+  cellpadding="1";
+  cellspacing="1";
+  style="width:500px;
 }
 
 th, td {
   text-align: center;
-  padding: 8px;
+  padding: 8px 16px;
+  border: 1px solid black; 
 }
 
 tr:nth-child(even) {
@@ -17,19 +21,23 @@ tr:nth-child(even) {
 </style>
 </head>
 <body>
-<table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+<table>
 	<thead>
 		<tr>
 			{% for header in csv_header.split(",") %}
-        <th style="border: 1px solid black; padding: 8px 16px;">{{ header }}</th>
+        <th>{{ header }}</th>
       {% endfor %}
 		</tr>	
 	</thead>
     <tbody> 
-        {% for host in csv_file.list %}
+        {% for sw in switch_list.list %}
           <tr>
-              {% for header in headers.split(",") %}
-              <td style="border: 1px solid black; padding: 8px 16px;">{{ host[header] }}</td>
+              {% for header in csv_header.split(",") %}
+                <td 
+                  {% if sw[header] == "FAIL" %}
+                      style="color:red"
+                  {% endif %}
+                > {{ sw[header] }}</td>    
               {% endfor %}
           </tr>
         {% endfor %}

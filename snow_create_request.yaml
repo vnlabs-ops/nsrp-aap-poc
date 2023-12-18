@@ -1,0 +1,33 @@
+---
+- name: Create ticket with notes
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  tasks:
+ 
+  - name: Create change request
+    register: new_request
+    servicenow.itsm.change_request:
+      type: "{{ type }}"
+      state: "{{ state }}"
+      requested_by: "{{ requested_by }}"
+      short_description: "{{ short_description }}"
+      description: "{{ description }}"
+      priority: "{{ priority }}"
+      risk: "{{ risk }}"
+      assignment_group: "{{ assignment_group }}"
+      category: "{{ category }}"
+
+      other:
+        expected_start: "{{ expected_start }}"
+
+  # - name: Pass Change Request Assignmet Group to next JT
+  #   set_stats:
+  #     data: 
+  #       cr_assignment_group: "{{ assignment_group }}"
+
+  - name: Pass Change Request number to next JT
+    set_stats:
+      data: 
+        request_number: "{{ new_request.record.number }}"

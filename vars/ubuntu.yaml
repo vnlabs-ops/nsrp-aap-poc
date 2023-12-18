@@ -6,8 +6,9 @@ oval_file_path: "/tmp"
 
 web_html_file_path: "/var/www/html/reports/linux"
 
+aap_html_file_path: "/reports"
 
-local_date_time: "{{ lookup('pipe', 'date +%Y%m%dT%H%M%S') }}"
+# local_date_time: "{{ lookup('pipe', 'date +%Y%m%dT%H%M%S') }}"
 
 openscap_profile_id: "xccdf_org.ssgproject.content_profile_cis_level1_server"
 

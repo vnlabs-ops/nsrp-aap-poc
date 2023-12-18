@@ -8,14 +8,20 @@
 
   pre_tasks:
 
+    - name: Get system time
+      run_once: yes
+      ansible.builtin.setup:
+        filter:
+          - ansible_date_time
+
     - name: CSV - Create file   
       ansible.builtin.copy:
-        dest: "{{ csv_filename }}"                    
+        dest: "{{ ansible_date_time.date }}.csv"                    
         content: " {{ csv_header }}"
       run_once: yes  
   
-  tasks:
-    
+  tasks:    
+
     - name: Run commands from the command list 
       register: cmd_outputs
       loop: "{{ compliance_checks }}"
@@ -47,7 +53,7 @@
 
     - name: CSV - Append content into file
       ansible.builtin.lineinfile:
-        dest: "{{ csv_filename }}" 
+        dest: "{{ ansible_date_time.date }}.csv" 
         line: "{{ csv_line }}"        
         state: present
      
@@ -56,7 +62,7 @@
     - name: CSV - Fetch file to aap
       register: output_file 
       fetch:
-        src: "{{ csv_filename }}" 
+        src: "{{ ansible_date_time.date }}.csv" 
         dest: "{{ aap_csv_file_path }}"
         owner: awx
         group: awx
