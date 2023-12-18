@@ -11,7 +11,7 @@
     servicenow.itsm.change_request:
       type: "{{ type }}"
       state: "{{ state }}"
-      requested_by: "{{ requested_by }}"
+      requested_by: "{{ requested_by }}@NSRP.COM.VN"
       short_description: "{{ short_description }}"
       description: "{{ description }}"
       priority: "{{ priority }}"
