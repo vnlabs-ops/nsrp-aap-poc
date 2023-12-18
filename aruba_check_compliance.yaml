@@ -17,7 +17,7 @@
     - name: CSV - Create file   
       ansible.builtin.copy:
         dest: "{{ ansible_date_time.date }}.csv"                    
-        content: " {{ csv_header }}"
+        content: "{{ csv_header }}"
       run_once: yes  
   
   tasks:    
