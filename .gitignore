@@ -1,3 +1,4 @@
 builder/ansible.cfg
 builder/context/
 *.log
+templates/*.json

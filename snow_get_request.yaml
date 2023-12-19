@@ -22,14 +22,45 @@
     servicenow.itsm.change_request_info:
       number: "{{ request_number }}"
 
+  - name: Create a change task
+    register: cr_change_task
+    servicenow.itsm.change_request_task:
+      configuration_item: "Netft"
+      change_request_number: "{{ request_number }}"
+      type: planning
+      state: open
+      assigned_to: "{{ requested_by }}@NSRP.COM.VN"
+      assignment_group: "{{ assignment_group }}"
+      short_description: "{{ short_description }}"
+      description: "{{ description }}"
+      planned_start_date: 2023-12-20 08:00:00
+      planned_end_date: 2023-12-21 16:00:00
+      other:
+        approval: approved
+
   - name: Transition to Scheduled
     servicenow.itsm.change_request:
       state: "scheduled"     
       assignment_group: "{{ assignment_group }}"
       number: "{{ request_number }}"
+      other:
+        category: "Security"
+        start_date: "2023-12-20 08:00:00"
+        end_date: "2023-12-20 08:00:00"
+        u_subcategory: "Application Security"
+        u_test_plan: "<p>Daily check switch compliance</p>"
+        u_backout_plan: "<p>Daily check switch compliance</p>"
+        u_risk_and_impact_analysis: "<p>Daily check switch compliance</p>"
+        u_communication: "<p>Daily check switch compliance</p>"
+        u_implementation_plan: "<p>Daily check switch compliance</p>"
+        u_preparation: "<p>Daily check switch compliance</p>"
 
-  - name: Transition to Implement
-    servicenow.itsm.change_request:
-      state: "implement"      
-      assignment_group: "{{ assignment_group }}"
-      number: "{{ request_number }}"
+  - name: Change state of the change task
+    servicenow.itsm.change_request_task:
+      state: in_progress
+      number: "{{ cr_change_task.record.number }}"
+
+  - name: Pass Change Task number to next JT
+    set_stats:
+      data: 
+        change_task_number: "{{ cr_change_task.record.number }}"

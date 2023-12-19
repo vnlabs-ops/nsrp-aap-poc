@@ -4,13 +4,21 @@
   gather_facts: no
   connection: local
 
+  vars_files:
+    - servicenow.yaml
+
   tasks:
  
+  - name: Prepare attachment for Change Request
+    ansible.builtin.get_url:
+      url: "{{ base_attachment_url }}/{{ attached_file }}"
+      dest: "{{ aap_downloaded_folder }}"
+      
   - name: Create change request
     register: new_request
     servicenow.itsm.change_request:
       type: "{{ type }}"
-      state: "{{ state }}"
+      state: new
       requested_by: "{{ requested_by }}@NSRP.COM.VN"
       short_description: "{{ short_description }}"
       description: "{{ description }}"
@@ -18,14 +26,10 @@
       risk: "{{ risk }}"
       assignment_group: "{{ assignment_group }}"
       category: "{{ category }}"
-
+      attachments:
+        - path: "{{ aap_downloaded_folder }}/{{ attached_file }}"
       other:
         expected_start: "{{ expected_start }}"
-
-  # - name: Pass Change Request Assignmet Group to next JT
-  #   set_stats:
-  #     data: 
-  #       cr_assignment_group: "{{ assignment_group }}"
 
   - name: Pass Change Request number to next JT
     set_stats:
