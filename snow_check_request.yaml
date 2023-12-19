@@ -22,3 +22,8 @@
     servicenow.itsm.change_request_info:
       number: "{{ request_number }}"
 
+
+  - name: Get Change Task Info
+    register: ct_info 
+    servicenow.itsm.change_request_task_info:
+      number: "{{ change_request_number }}"
