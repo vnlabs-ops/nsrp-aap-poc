@@ -18,7 +18,7 @@
         state: closed
         close_code: "successful"
         close_notes: "Closed"
-        number: "{{ change_task_number }}""
+        number: "{{ change_task_number }}"
 
 
     - name: Transition to Review
