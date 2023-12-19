@@ -25,7 +25,7 @@
   - name: Create a change task
     register: cr_change_task
     servicenow.itsm.change_request_task:
-      # configuration_item: "Netft"
+      configuration_item: "Security"
       change_request_number: "{{ request_number }}"
       type: planning
       state: open
@@ -44,6 +44,7 @@
       assignment_group: "{{ assignment_group }}"
       number: "{{ request_number }}"
       other:
+        configuration_item: "Security"
         category: "Security"
         start_date: "2023-12-20 08:00:00"
         end_date: "2023-12-20 08:00:00"
@@ -57,6 +58,7 @@
 
   - name: Change state of the change task
     servicenow.itsm.change_request_task:
+      type: implementation
       state: in_progress
       number: "{{ cr_change_task.record.number }}"
 

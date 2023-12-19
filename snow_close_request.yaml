@@ -15,6 +15,7 @@
         
     - name: Close a change task
       servicenow.itsm.change_request_task:
+        type: review
         state: closed
         close_code: "successful"
         close_notes: "Closed"
