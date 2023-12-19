@@ -25,7 +25,7 @@
   - name: Create a change task
     register: cr_change_task
     servicenow.itsm.change_request_task:
-      configuration_item: "Netft"
+      # configuration_item: "Netft"
       change_request_number: "{{ request_number }}"
       type: planning
       state: open
