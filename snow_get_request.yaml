@@ -46,8 +46,8 @@
       other:
         configuration_item: "Security"
         category: "Security"
-        start_date: "2023-12-20 08:00:00"
-        end_date: "2023-12-20 08:00:00"
+        start_date: "2023-12-19 08:00:00"
+        end_date: "2023-12-22 08:00:00"
         u_subcategory: "Application Security"
         u_test_plan: "<p>Daily check switch compliance</p>"
         u_backout_plan: "<p>Daily check switch compliance</p>"
