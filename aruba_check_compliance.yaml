@@ -38,10 +38,10 @@
           {%- set check_result = [ switch_name, ansible_host ] -%}
           {%- set len = compliance_checks|length -%}
           {%- for i in range(1,len) -%}
-            {%- set check_condition = namespace(value="OK") -%} 
+            {%- set check_condition = namespace(value="FAIL") -%} 
             {%- set condition = compliance_checks[i].expected_result -%} 
-            {%- if condition not in cmd_outputs.results[i].stdout[0] -%}
-                {%- set check_condition.value = "FAIL" -%}                                                       
+            {%- if condition in cmd_outputs.results[i].stdout[0] -%}
+                {%- set check_condition.value = "OK" -%}                                                       
             {%- endif -%}            
             {%- do check_result.append(check_condition.value) -%}
           {%- endfor -%}          
