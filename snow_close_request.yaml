@@ -12,10 +12,11 @@
         state: "implement"      
         assignment_group: "{{ assignment_group }}"
         number: "{{ request_number }}"
+        other:
+          configuration_item: "Security"
         
     - name: Close a change task
-      servicenow.itsm.change_request_task:
-        type: review
+      servicenow.itsm.change_request_task:        
         state: closed
         close_code: "successful"
         close_notes: "Closed"
@@ -27,6 +28,8 @@
         state: "review"      
         assignment_group: "{{ assignment_group }}"
         number: "{{ request_number }}"
+        other:
+          configuration_item: "Security"
         
     - name: Close Change Request       
       servicenow.itsm.change_request:
@@ -35,6 +38,8 @@
         close_notes: "Closed"
         assignment_group: "{{ assignment_group }}"
         number: "{{ request_number }}"
+        other:
+          configuration_item: "Security"
 
 
 

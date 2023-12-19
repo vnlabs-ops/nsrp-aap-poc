@@ -30,6 +30,7 @@
         - path: "{{ aap_downloaded_folder }}/{{ attached_file }}"
       other:
         expected_start: "{{ expected_start }}"
+        configuration_item: "Security"
 
   - name: Pass Change Request number to next JT
     set_stats:
