@@ -37,14 +37,15 @@
       planned_end_date: 2023-12-21 16:00:00
       other:
         approval: approved
+        cmdb_ci: "f44e145adb639c5061e1b6d3f39619e5"
 
   - name: Transition to Scheduled
     servicenow.itsm.change_request:
       state: "scheduled"     
       assignment_group: "{{ assignment_group }}"
       number: "{{ request_number }}"
-      other:
-        configuration_item: "Security"
+      other:                
+        cmdb_ci: "f44e145adb639c5061e1b6d3f39619e5"
         category: "Security"
         start_date: "2023-12-19 08:00:00"
         end_date: "2023-12-22 08:00:00"
